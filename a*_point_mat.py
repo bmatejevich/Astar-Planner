@@ -247,18 +247,59 @@ def check_polygon(x,y):
 
 def plot_workspace(x_start,y_start,x_goal,y_goal):
     fig, ax = plt.subplots()
+
+
     verts2=[(95,200-170),(30.5,200-132.5),(35.5,200-123.9),(100,200-161.4),(95,200-170)]
     codes2 = [
-    Path.MOVETO,
-    Path.LINETO,
-    Path.LINETO,
-    Path.LINETO,
-    Path.CLOSEPOLY,
+        Path.MOVETO,
+        Path.LINETO,
+        Path.LINETO,
+        Path.LINETO,
+        Path.CLOSEPOLY,
     ]
     path2 = Path(verts2, codes2)
-    patch2 = patches.PathPatch(path2, facecolor='red', lw=2)
+    patch2 = patches.PathPatch(path2, facecolor='red', lw=0)
     ax.add_patch(patch2)
-
+    
+    verts3=[(225,200-190),(200,200-175),(225,200-160),(250,200-175),(225,200-190)]
+    codes3 = [
+        Path.MOVETO,
+        Path.LINETO,
+        Path.LINETO,
+        Path.LINETO,
+        Path.CLOSEPOLY,
+    ]
+    path3 = Path(verts3, codes3)
+    patch3 = patches.PathPatch(path3, facecolor='red', lw=0)
+    ax.add_patch(patch3)
+    
+    verts4=[(20,200-80),(25,200-15),(75,200-15),(50,200-50),(20,200-80)]
+    codes4 = [
+        Path.MOVETO,
+        Path.LINETO,
+        Path.LINETO,
+        Path.LINETO,
+        Path.CLOSEPOLY,
+    ]
+    path4 = Path(verts4, codes4)
+    patch4 = patches.PathPatch(path4, facecolor='red', lw=0)
+    ax.add_patch(patch4)
+    
+    verts5=[(50,200-50),(75,200-15),(100,200-50),(75,200-80),(50,200-50)]
+    codes5 = [
+        Path.MOVETO,
+        Path.LINETO,
+        Path.LINETO,
+        Path.LINETO,
+        Path.CLOSEPOLY,
+    ]
+    path5 = Path(verts5, codes5)
+    patch5 = patches.PathPatch(path5, facecolor='red', lw=0)
+    ax.add_patch(patch5)
+    
+    ax.add_patch(patches.Circle((225, 200-50), radius=25, color='red', lw=2))
+    ax.add_patch(patches.Ellipse((150, 200-100), 80, 40, 0, color='red', lw=2))
+    
     ax.set_xlim(0, 300)
     ax.set_ylim(0, 200)
     return fig,ax
