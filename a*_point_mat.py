@@ -14,7 +14,8 @@ class Node:
     def __init__(self, x, y,orientation):
         self.x = x
         self.y = y
-        self.cost = math.inf
+        self.cost_to_come = math.inf
+        self.total_cost = math.inf
         self.parent = None
         self.orientation = orientation
 
@@ -29,8 +30,9 @@ class Robot:
 def get_min_node(queue):
     min_node = 0
     for node in range(len(queue)):
-        if queue[node].cost < queue[min_node].cost:
+        if queue[node].total_cost < queue[min_node].total_cost:
             min_node = node
+    
     return queue.pop(min_node)
 
 def node_exists(x,y,orientation, queue):
@@ -47,9 +49,10 @@ def cost_to_go(start,goal):
     x2 = goal[0]
     y1 = start[1]
     y2 = goal[1]
-    dist = math.sqrt((x1-x2)**2+(y1-y2)**2)
+    dist = math.sqrt(((x1-x2)**2)+((y1-y2)**2))
+    
     #print(dist)
-    return(dist)
+    return dist
         
 def try_move(move, current_point, radius, clearance,orientation):
     if move == 'up_30':
@@ -285,7 +288,7 @@ def plot_workspace(x_start,y_start,x_goal,y_goal):
 def up_30(point, radius, clearance,orientation):
     x = point[0]
     y = point[1]
-    cost = 1
+    cost = step_size
     
     dx = math.cos(math.radians(orientation+30))*step_size
     dy = math.sin(math.radians(orientation+30))*step_size
@@ -302,7 +305,7 @@ def up_30(point, radius, clearance,orientation):
 def up_60(point, radius, clearance,orientation):
     x = point[0]
     y = point[1]
-    cost = 1
+    cost = step_size
     
     dx = math.cos(math.radians(orientation+60))*step_size
     dy = math.sin(math.radians(orientation+60))*step_size
@@ -318,7 +321,7 @@ def up_60(point, radius, clearance,orientation):
 def down_30(point, radius, clearance,orientation):
     x = point[0]
     y = point[1]
-    cost = 1
+    cost = step_size
     
     dx = math.cos(math.radians(orientation-30))*step_size
     dy = math.sin(math.radians(orientation-30))*step_size
@@ -334,7 +337,7 @@ def down_30(point, radius, clearance,orientation):
 def down_60(point, radius, clearance,orientation):
     x = point[0]
     y = point[1]
-    cost = 1
+    cost = step_size
     
     dx = math.cos(math.radians(orientation-60))*step_size
     dy = math.sin(math.radians(orientation-60))*step_size
@@ -349,7 +352,7 @@ def down_60(point, radius, clearance,orientation):
 def forward(point, radius, clearance,orientation):
     x = point[0]
     y = point[1]
-    cost = 1
+    cost = step_size
     dx = math.cos(math.radians(orientation))*step_size
     dy = math.sin(math.radians(orientation))*step_size
     new_point = [(x+dx),(y+dy)]
@@ -377,7 +380,8 @@ def djikstra(fig,ax, robot):
     ax.add_patch(patches.Circle((goal_node_pos[0],goal_node_pos[1]), goal_thresh,fill = False, color='red'))
     
     start_node = Node(start_node_pos[0],start_node_pos[1],orientation)
-    start_node.cost = 0
+    start_node.cost_to_come = 0
+    start_node.total_cost = cost_to_go(start_node_pos,goal_node_pos)
 
 
     
@@ -393,11 +397,11 @@ def djikstra(fig,ax, robot):
         current_point = [current_node.x,current_node.y]
         orientation = current_node.orientation
         visitedNodes[int(current_node.x*2)][int((current_node.y)*2)][int(orientation%30)]=1
-
+        #print("cost to come: " +str(current_node.cost_to_come) + " total cost: " + str(current_node.total_cost))
         for move in moves:
             orientation = current_node.orientation
             #print(move, current_point, radius, clearance,orientation)
-            new_point, cost,orientation = try_move(move, current_point, radius, clearance,orientation)
+            new_point, cost_to_come,orientation = try_move(move, current_point, radius, clearance,orientation)
             
             frame +=1
             if new_point is not None:
@@ -412,15 +416,17 @@ def djikstra(fig,ax, robot):
                 new_node.parent = current_node
 
                 
-                
+                #print((new_round(new_node.x)*2),(new_round(new_node.y)*2),(orientation%30))
                 if visitedNodes[int(new_round(new_node.x)*2)][int(new_round(new_node.y)*2)][int(orientation%30)]== 0:
-                    new_node.cost = cost + new_node.parent.cost+ cost_to_go(new_point,goal_node_pos)
+                    new_node.cost_to_come = cost_to_come + new_node.parent.cost_to_come
+                    new_node.total_cost = new_node.cost_to_come + 1*cost_to_go(new_point,goal_node_pos)
+                    #print("cost to come: " +str(new_node.cost_to_come) + " total cost: " + str(new_node.total_cost))
                     visitedNodes[int(new_round(new_node.x)*2)][int(new_round(new_node.y)*2)][int(orientation%30)]== 1
                     queue.append(new_node)
                     #draw arrow
                     #print(current_node.x,current_node.y,abs(new_node.x-current_node.x),abs(new_node.y-current_node.y))
                     ax.arrow(current_node.x,current_node.y,new_node.x-current_node.x,new_node.y-current_node.y,length_includes_head=True,width = .001,head_width=.5, head_length=.5)
-                if frame%400 == 0:
+                if frame%200 == 0:
                     plt.draw()
                     plt.pause(.0001)
                 else:
@@ -428,8 +434,8 @@ def djikstra(fig,ax, robot):
                     node_exist_index = node_exists(new_point[0],new_point[0],orientation, queue)
                     if node_exist_index is not None:
                         temp_node = queue[node_exist_index]
-                        if temp_node.cost > cost + new_node.parent.cost:
-                            temp_node.cost = cost + new_node.parent.cost
+                        if temp_node.total_cost > cost_to_come + new_node.parent.cost_to_come+1*cost_to_go(new_point,goal_node_pos):
+                            temp_node.total_cost = cost_to_come + new_node.parent.cost_to_come+1*cost_to_go(new_point,goal_node_pos)
                             temp_node.parent = current_node
             else:
                 continue
@@ -539,16 +545,16 @@ if parent is not None:
     first_parent = final_node.parent
     x = first_parent.x
     y = first_parent.y
-    ax.arrow(x,y,xend-x,yend-y,length_includes_head=True,head_width=3, head_length=1,color="red")
+    ax.arrow(x,y,xend-x,yend-y,length_includes_head=True,head_width=.3, head_length=.5,color="red")
     xend = x
     yend = y
     for parent in parent_list:
         x = parent.x
         y = parent.y
         orientation = parent.orientation
-        ax.arrow(x,y,xend-x,yend-y,length_includes_head=True,head_width=3, head_length=1,color="red")
+        ax.arrow(x,y,xend-x,yend-y,length_includes_head=True,head_width=.3, head_length=.5,color="red")
         plt.draw()
-        plt.pause(.5)
+        plt.pause(.2)
         xend = x
         yend = y
     plt.pause(10)
