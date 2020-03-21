@@ -365,7 +365,7 @@ def forward(point, radius, clearance,orientation):
 
 
 
-def djikstra(fig,ax, robot):
+def Astar(fig,ax, robot):
     import matplotlib.pyplot as plt
     plt.ion()
     radius = robot.radius
@@ -421,7 +421,7 @@ def djikstra(fig,ax, robot):
                     new_node.cost_to_come = cost_to_come + new_node.parent.cost_to_come
                     new_node.total_cost = new_node.cost_to_come + 1*cost_to_go(new_point,goal_node_pos)
                     #print("cost to come: " +str(new_node.cost_to_come) + " total cost: " + str(new_node.total_cost))
-                    visitedNodes[int(new_round(new_node.x)*2)][int(new_round(new_node.y)*2)][int(orientation%30)]== 1
+                    visitedNodes[int(new_round(new_node.x)*2)][int(new_round(new_node.y)*2)][int(orientation%30)]= 1
                     queue.append(new_node)
                     #draw arrow
                     #print(current_node.x,current_node.y,abs(new_node.x-current_node.x),abs(new_node.y-current_node.y))
@@ -534,7 +534,7 @@ robot1 = Robot(radius, clearance, start_node, goal_node,orientation)
 fig,ax = plot_workspace(x_start,y_start,x_goal,y_goal)
 
 
-parent, final_node = djikstra(fig,ax, robot1)
+parent, final_node = Astar(fig,ax, robot1)
 plt.pause(1)
 print("Time to solve: " + str(t.time()-start) + " seconds")
 print(parent)
