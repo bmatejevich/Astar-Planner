@@ -47,7 +47,7 @@ def cost_to_go(start,goal):
     x2 = goal[0]
     y1 = start[1]
     y2 = goal[1]
-    dist = max ( abs(x1-x2),abs(y1-y2) )
+    dist = math.sqrt((x1-x2)**2+(y1-y2)**2)
     #print(dist)
     return(dist)
         
@@ -63,26 +63,6 @@ def try_move(move, current_point, radius, clearance,orientation):
     if move == 'forward':
         return forward(current_point, radius, clearance,orientation)
     
-
-def ways_in(x,y): # a pixel with no obstacles or edges nearby can be achieved from 8 moves
-    count = 0
-    if y > 0: #from top
-        count+=1
-    if y < 200: #from bottom
-        count+=1
-    if x > 0: #from left
-        count+=1
-    if x < 200: #from right
-        count+=1
-    if x < 300 and y < 200: #bottom right
-        count+=1
-    if x < 300 and y > 0: #top left
-        count+=1
-    if x > 0 and y > 0: #top left
-        count+=1
-    if x > 0 and y < 200: #bottom right
-        count+=1
-    return count
 
 def draw_arrow(ax,x1,y1,x2,y2): #fill visited pixes
     ax.quiver(x1, y1, x2,y2,units='xy' ,scale=1)
@@ -101,7 +81,6 @@ def check_viableX(point):
         return True
     else:
         print("Invalid")
-        print()
         return False
     
 def check_viableY(point):
@@ -109,7 +88,6 @@ def check_viableY(point):
         return True
     else:
         print("Invalid")
-        print()
         return False
 
 def check_oval(x,y):
@@ -258,7 +236,7 @@ def plot_workspace(x_start,y_start,x_goal,y_goal):
         Path.CLOSEPOLY,
     ]
     path2 = Path(verts2, codes2)
-    patch2 = patches.PathPatch(path2, facecolor='red', lw=0)
+    patch2 = patches.PathPatch(path2, facecolor='blue', lw=0)
     ax.add_patch(patch2)
     
     verts3=[(225,200-190),(200,200-175),(225,200-160),(250,200-175),(225,200-190)]
@@ -270,7 +248,7 @@ def plot_workspace(x_start,y_start,x_goal,y_goal):
         Path.CLOSEPOLY,
     ]
     path3 = Path(verts3, codes3)
-    patch3 = patches.PathPatch(path3, facecolor='red', lw=0)
+    patch3 = patches.PathPatch(path3, facecolor='blue', lw=0)
     ax.add_patch(patch3)
     
     verts4=[(20,200-80),(25,200-15),(75,200-15),(50,200-50),(20,200-80)]
@@ -282,7 +260,7 @@ def plot_workspace(x_start,y_start,x_goal,y_goal):
         Path.CLOSEPOLY,
     ]
     path4 = Path(verts4, codes4)
-    patch4 = patches.PathPatch(path4, facecolor='red', lw=0)
+    patch4 = patches.PathPatch(path4, facecolor='blue', lw=0)
     ax.add_patch(patch4)
     
     verts5=[(50,200-50),(75,200-15),(100,200-50),(75,200-80),(50,200-50)]
@@ -294,11 +272,11 @@ def plot_workspace(x_start,y_start,x_goal,y_goal):
         Path.CLOSEPOLY,
     ]
     path5 = Path(verts5, codes5)
-    patch5 = patches.PathPatch(path5, facecolor='red', lw=0)
+    patch5 = patches.PathPatch(path5, facecolor='blue', lw=0)
     ax.add_patch(patch5)
     
-    ax.add_patch(patches.Circle((225, 200-50), radius=25, color='red', lw=2))
-    ax.add_patch(patches.Ellipse((150, 200-100), 80, 40, 0, color='red', lw=2))
+    ax.add_patch(patches.Circle((225, 200-50), radius=25, color='blue', lw=2))
+    ax.add_patch(patches.Ellipse((150, 200-100), 80, 40, 0, color='blue', lw=2))
     
     ax.set_xlim(0, 300)
     ax.set_ylim(0, 200)
@@ -311,7 +289,7 @@ def up_30(point, radius, clearance,orientation):
     
     dx = math.cos(math.radians(orientation+30))*step_size
     dy = math.sin(math.radians(orientation+30))*step_size
-    new_point = [new_round(x+dx),new_round(y+dy)]
+    new_point = [(x+dx),(y+dy)]
     x = new_point[0]
     y = new_point[1]
     if check_viableX(x) and check_viableY(y) and check_circle(x,y) and check_oval(x,y) and check_rectangle(x,y) and check_diamond(x,y)and check_polygon(x,y):
@@ -328,7 +306,7 @@ def up_60(point, radius, clearance,orientation):
     
     dx = math.cos(math.radians(orientation+60))*step_size
     dy = math.sin(math.radians(orientation+60))*step_size
-    new_point = [new_round(x+dx),new_round(y+dy)]
+    new_point = [(x+dx),(y+dy)]
     x = new_point[0]
     y = new_point[1]
     if check_viableX(x) and check_viableY(y) and check_circle(x,y) and check_oval(x,y) and check_rectangle(x,y)and check_diamond(x,y)and check_polygon(x,y):
@@ -344,7 +322,7 @@ def down_30(point, radius, clearance,orientation):
     
     dx = math.cos(math.radians(orientation-30))*step_size
     dy = math.sin(math.radians(orientation-30))*step_size
-    new_point = [new_round(x+dx),new_round(y+dy)]
+    new_point = [(x+dx),(y+dy)]
     x = new_point[0]
     y = new_point[1]
     if check_viableX(x) and check_viableY(y) and check_circle(x,y) and check_oval(x,y)and check_rectangle(x,y)and check_diamond(x,y)and check_polygon(x,y):
@@ -360,7 +338,7 @@ def down_60(point, radius, clearance,orientation):
     
     dx = math.cos(math.radians(orientation-60))*step_size
     dy = math.sin(math.radians(orientation-60))*step_size
-    new_point = [new_round(x+dx),new_round(y+dy)]
+    new_point = [(x+dx),(y+dy)]
     x = new_point[0]
     y = new_point[1]
     if check_viableX(x) and check_viableY(y) and check_circle(x,y) and check_oval(x,y)and check_rectangle(x,y)and check_diamond(x,y)and check_polygon(x,y):
@@ -374,7 +352,7 @@ def forward(point, radius, clearance,orientation):
     cost = 1
     dx = math.cos(math.radians(orientation))*step_size
     dy = math.sin(math.radians(orientation))*step_size
-    new_point = [new_round(x+dx),new_round(y+dy)]
+    new_point = [(x+dx),(y+dy)]
     x = new_point[0]
     y = new_point[1]
     if check_viableX(x) and check_viableY(y) and check_circle(x,y) and check_oval(x,y)and check_rectangle(x,y)and check_diamond(x,y)and check_polygon(x,y):
@@ -395,20 +373,19 @@ def djikstra(fig,ax, robot):
     goal_node_pos = robot.goal
     
     ax.scatter(start_node_pos[0],start_node_pos[1],color="green",s=5)
-    ax.scatter(goal_node_pos[0],goal_node_pos[1],color="red",s=5)
-    
+    ax.scatter(goal_node_pos[0],goal_node_pos[1],color="red",s=3)
+    ax.add_patch(patches.Circle((goal_node_pos[0],goal_node_pos[1]), goal_thresh,fill = False, color='red'))
     
     start_node = Node(start_node_pos[0],start_node_pos[1],orientation)
     start_node.cost = 0
 
-    waysIn = ways_in(goal_node_pos[0],goal_node_pos[1])
-    print("Ways in", waysIn)
+
     
     visitedNodes = np.zeros((600,400,12))
     queue = [start_node]
     
-    moves = ["forward","up_60", "up_30", "down_30", "down_60"]
-    counter = 0
+    moves = ["forward","up_30", "down_30", "up_60", "down_60"]
+    
     frame = 0
     
     while queue:
@@ -436,18 +413,18 @@ def djikstra(fig,ax, robot):
 
                 
                 
-                if visitedNodes[int(new_node.x*2)][int((new_node.y)*2)][int(orientation%30)]== 0:
+                if visitedNodes[int(new_round(new_node.x)*2)][int(new_round(new_node.y)*2)][int(orientation%30)]== 0:
                     new_node.cost = cost + new_node.parent.cost+ cost_to_go(new_point,goal_node_pos)
-                    visitedNodes[int(new_node.x*2)][int((new_node.y)*2)][int(orientation%30)]== 1
+                    visitedNodes[int(new_round(new_node.x)*2)][int(new_round(new_node.y)*2)][int(orientation%30)]== 1
                     queue.append(new_node)
                     #draw arrow
                     #print(current_node.x,current_node.y,abs(new_node.x-current_node.x),abs(new_node.y-current_node.y))
-                    ax.arrow(current_node.x,current_node.y,new_node.x-current_node.x,new_node.y-current_node.y,length_includes_head=True,head_width=3, head_length=1)
-                
+                    ax.arrow(current_node.x,current_node.y,new_node.x-current_node.x,new_node.y-current_node.y,length_includes_head=True,width = .001,head_width=.5, head_length=.5)
+                if frame%400 == 0:
                     plt.draw()
-                    plt.pause(1)
+                    plt.pause(.0001)
                 else:
-                    print("REPEAT!")
+                    #print("REPEAT!")
                     node_exist_index = node_exists(new_point[0],new_point[0],orientation, queue)
                     if node_exist_index is not None:
                         temp_node = queue[node_exist_index]
@@ -468,7 +445,6 @@ orientation_check = False
 #change these values for point/rigid robot
 radius = 0
 clearance = 0
-step_size = 10
 
 
 while start == False:
@@ -518,13 +494,34 @@ while orientation_check == False:
     else:
         print("Enter a multiple of 30 degrees!")
 
-
+radius_check = False
+clearance_check = False
+step_size_check = False
+#radius,clearance,step size
+while radius_check == False:
+    radius = input("Enter robot radius (must be integer) :")
+    radius = int(radius)
+    radius_check = True
+    
+while clearance_check == False:
+    clearance = input("Enter robot clearnace (must be integer) :")
+    clearance = int(clearance)
+    clearance_check = True
+    
+while step_size_check == False:
+    step_size = input("Enter robot step size (1-10) :")
+    if int(step_size) >=1 and int(step_size)<=100:
+        step_size = int(step_size)
+        step_size_check = True
+    else:
+        print("Enter a number between 1 and 10!")
+        
 start = t.time()
 
 start_node = [x_start,y_start,orientation]
 goal_node = [x_goal,y_goal,orientation]
 
-goal_thresh = 3
+goal_thresh = float(input("Enter goal threshold: "))
 
 robot1 = Robot(radius, clearance, start_node, goal_node,orientation)
 
@@ -551,7 +548,7 @@ if parent is not None:
         orientation = parent.orientation
         ax.arrow(x,y,xend-x,yend-y,length_includes_head=True,head_width=3, head_length=1,color="red")
         plt.draw()
-        plt.pause(1)
+        plt.pause(.5)
         xend = x
         yend = y
     plt.pause(10)
