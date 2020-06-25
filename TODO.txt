@@ -1,8 +1,0 @@
-TODO
-1) convert point and rigid to a*
-2) convert map to matplotlib
-3) create visited array (h*2,w*2,360/30)
-4) plot arrows
-5) add orientation to robot class and request it at start
-6) define action set with 30 degrees
-7) define goal threshold
