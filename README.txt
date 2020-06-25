@@ -1,16 +1,18 @@
 README
 
 Dependencies are numpy and matplotlib
-pip install lumpy
-pip install matplotlib
+$ pip install numpy
+$ pip install matplotlib
 
-to run:
-cd to directory that contains file
-python3 Astar_rigid.py
-enter needed information
-start x and y
-goal x and y
-start orientation
-radius, clearance and step size
+To run:
+$ cd /path_to_files/
+$ python3 main.py
 
-and let it run
+Enter needed information
+Start x and y
+Goal x and y
+Orientation
+Radius
+Clearance
+Step size
+Goal threshold
